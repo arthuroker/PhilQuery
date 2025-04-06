@@ -57,10 +57,16 @@ def load_index(filename_prefix="cached"):
 
 def ask_question(question, index, chunks):
     
-    if embedder is None:
-        raise RuntimeError("Embedder not available. This function should not run on Streamlit Cloud.")
-    # Embed the question
-    question_embedding = embedder.encode([question])
+    try:
+        # Try using local embedder first
+        question_embedding = embedder.encode([question])
+    except Exception:
+        # Fallback: use Groq to embed the question
+        response = client.embeddings.create(
+            model="nomic-embed-text",
+            input=[question]
+        )
+        question_embedding = [response.data[0].embedding]
 
     # Search the FAISS index
     top_k = 3
