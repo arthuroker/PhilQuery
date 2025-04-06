@@ -13,7 +13,10 @@ OpenAI.api_base = "https://api.groq.com/openai/v1"
 OpenAI.api_key = os.getenv("GROQ_API_KEY")
 
 # Load embedding model
-embedder = SentenceTransformer('all-MiniLM-L6-v2')
+embedder = None
+if os.getenv("PHILQUERY_MODE") == "embed":
+    from sentence_transformers import SentenceTransformer
+    embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
 # Load and chunk text
 def load_text_chunks(filepath, chunk_size = 800):
@@ -99,6 +102,19 @@ def ask_question(question, index, chunks):
 
 
 def main():
+    # Check if we're in embedding mode
+    if os.getenv("PHILQUERY_MODE") == "embed":
+        print("Running in embedding mode...")
+
+        filepath = os.path.join("data", "social_contract_rousseau.txt")
+        chunks = load_text_chunks(filepath)
+        index, embeddings, chunks = build_faiss_index(chunks)
+        save_index(index, embeddings, chunks)
+
+        print(f"Indexed and cached {len(chunks)} chunks.")
+        return 
+
+    # Otherwise, run in normal query mode
     print("Checking for cached index...")
 
     index, chunks = load_index()
@@ -108,7 +124,7 @@ def main():
     else:
         print("No cache found. Building index from scratch...")
 
-        filepath = os.path.join("data", "social_contract_rousseau.txt") 
+        filepath = os.path.join("data", "social_contract_rousseau.txt")
         chunks = load_text_chunks(filepath)
         index, embeddings, chunks = build_faiss_index(chunks)
         save_index(index, embeddings, chunks)
