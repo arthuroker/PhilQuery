@@ -100,12 +100,6 @@ def ask_question(question, index, chunks):
 **Answer:**
 """
 
-    # Use Groq-compatible OpenAI client
-    client = OpenAI(
-        api_key=os.getenv("GROQ_API_KEY"),
-        base_url="https://api.groq.com/openai/v1"
-    )
-
     # Make the request
     response = client.chat.completions.create(
         model="llama3-70b-8192",
