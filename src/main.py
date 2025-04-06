@@ -4,25 +4,16 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 import pickle
-import streamlit as st
 
 # Load the .env file
 load_dotenv()
-
-client = OpenAI(
-    api_key=os.getenv("GROQ_API_KEY", st.secrets.get("GROQ_API_KEY", "")),
-    base_url="https://api.groq.com/openai/v1"
-)
 
 # Load Groq API Key
 OpenAI.api_base = "https://api.groq.com/openai/v1"
 OpenAI.api_key = os.getenv("GROQ_API_KEY")
 
 # Load embedding model
-embedder = None
-if os.getenv("PHILQUERY_MODE") == "embed":
-    from sentence_transformers import SentenceTransformer
-    embedder = SentenceTransformer("all-MiniLM-L6-v2")
+embedder = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Load and chunk text
 def load_text_chunks(filepath, chunk_size = 800):
@@ -62,17 +53,8 @@ def load_index(filename_prefix="cached"):
     return None, None
 
 def ask_question(question, index, chunks):
-    
-    try:
-        # Try using local embedder first
-        question_embedding = embedder.encode([question])
-    except Exception:
-        # Fallback: use Groq to embed the question
-        response = client.embeddings.create(
-            model="nomic-embed-text",
-            input=[question]
-        )
-        question_embedding = [response.data[0].embedding]
+    # Embed the question
+    question_embedding = embedder.encode([question])
 
     # Search the FAISS index
     top_k = 3
@@ -100,6 +82,12 @@ def ask_question(question, index, chunks):
 **Answer:**
 """
 
+    # Use Groq-compatible OpenAI client
+    client = OpenAI(
+        api_key=os.getenv("GROQ_API_KEY"),
+        base_url="https://api.groq.com/openai/v1"
+    )
+
     # Make the request
     response = client.chat.completions.create(
         model="llama3-70b-8192",
@@ -111,19 +99,6 @@ def ask_question(question, index, chunks):
 
 
 def main():
-    # Check if we're in embedding mode
-    if os.getenv("PHILQUERY_MODE") == "embed":
-        print("Running in embedding mode...")
-
-        filepath = os.path.join("data", "social_contract_rousseau.txt")
-        chunks = load_text_chunks(filepath)
-        index, embeddings, chunks = build_faiss_index(chunks)
-        save_index(index, embeddings, chunks)
-
-        print(f"Indexed and cached {len(chunks)} chunks.")
-        return 
-
-    # Otherwise, run in normal query mode
     print("Checking for cached index...")
 
     index, chunks = load_index()
@@ -132,18 +107,12 @@ def main():
         print(f"Loaded {len(chunks)} chunks from cache.")
     else:
         print("No cache found. Building index from scratch...")
-
-        filepath = os.path.join("data", "social_contract_rousseau.txt")
-        chunks = load_text_chunks(filepath)
-        index, embeddings, chunks = build_faiss_index(chunks)
-        save_index(index, embeddings, chunks)
-        print(f"Indexed and cached {len(chunks)} chunks.")
+    
+    filepath = os.path.join("data", "social_contract_rousseau.txt") 
+    chunks = load_text_chunks(filepath)
+    index, embeddings, chunks = build_faiss_index(chunks)
+    save_index(index, embeddings, chunks)
+    print(f"Indexed and cached {len(chunks)} chunks.")
 
     # Ask a question
     question = input("Ask your political philosophy question: ")
-    answer = ask_question(question, index, chunks)
-    print("\n--- Answer ---\n")
-    print(answer)
-
-if __name__ == "__main__":
-    main()
