@@ -2,87 +2,101 @@ import streamlit as st
 from main import load_index, ask_question # Assuming these functions exist in main.py
 
 # --- Page Configuration ---
+# Use a more serene icon like a scroll or bamboo
 st.set_page_config(
-    page_title="PhilQuery 📖",
-    page_icon="📖", # Can be an emoji or a URL
+    page_title="PhilQuery 📜",
+    page_icon="📜", # Scroll emoji for a classic, scholarly feel
     layout="centered",
-    initial_sidebar_state="auto" # Or "expanded", "collapsed"
+    initial_sidebar_state="auto"
 )
 
 # --- Header ---
-st.header("PhilQuery 📖", divider='rainbow')
-st.caption("A citation-aware political philosophy assistant by Arthur Oker")
+# Use st.title for a cleaner main heading, remove the divider argument
+st.title("PhilQuery 📜")
+# Slightly refined caption
+st.caption("An AI assistant for exploring political philosophy texts, by Arthur Oker.")
 
-# --- Introduction ---
-col1, col2 = st.columns([2, 1]) # Make first column wider
+st.divider() # Use a simple divider for separation
+
+# --- Introduction & Knowledge Base ---
+col1, col2 = st.columns([3, 2]) # Slightly adjust column ratio if desired
 
 with col1:
+    # Keep the core message, maybe slightly rephrase for serenity
     st.markdown("""
-    **Welcome to PhilQuery!**
+    **Welcome.**
 
-    This is an AI-powered research assistant designed for exploring political philosophy concepts.
-    It answers your questions based *strictly* on the texts indexed within its knowledge base.
+    PhilQuery provides answers grounded *exclusively* in the indexed philosophical texts.
+    Engage with core ideas directly from the source.
 
-    > _"Answer the question using only the context provided."_ 💬
-    """)
+    > *"Seek understanding from the text itself."*
+    """) # Slightly rephrased quote concept
 
 with col2:
-    st.info("**🧠 Current Knowledge Base:**")
+    # Use a subheader for the knowledge base - cleaner than st.info
+    st.subheader("Source Texts") # More direct title
+    # Using subtle bullet points (hyphens or asterisks)
     st.markdown("""
-    * Jean-Jacques Rousseau:
-        * *The Social Contract*
-        * *Discourse on Inequality*
-        * *Discourse on Political Economy*
-        * _(Other early discourses)_
+    - **Jean-Jacques Rousseau:**
+        - *The Social Contract*
+        - *Discourse on Inequality*
+        - *Discourse on Political Economy*
+        - *Other early discourses*
     """) # Add more sources as needed
 
-with st.expander("⚙️ How it Works & Citations"):
+# --- How it Works Expander ---
+# Use a more neutral icon or symbol if desired, gear is okay for 'how it works'
+with st.expander("Understanding the Process ⚙️"): # Slightly softer title
     st.markdown("""
-    PhilQuery uses semantic search (FAISS + sentence-transformers) to identify the most relevant passages from the indexed texts in response to your question.
+    PhilQuery employs semantic search to find relevant passages within the texts for your query.
 
-    An LLM (Large Language Model accessed via Groq) then synthesizes an answer based *only* on these retrieved passages.
+    An AI then synthesizes an answer based *solely* on these findings.
 
-    Key passages used to formulate the answer are explicitly cited with a short excerpt from the original source text to ensure transparency and traceability.
+    Key source passages are cited with excerpts for transparency and direct reference.
     """)
 
-st.divider() # Use st.divider for a cleaner look
+st.divider()
 
 # --- Main Application Logic ---
 try:
     # Attempt to load the index and chunks
-    index, chunks = load_index()
+    index, chunks = load_index(filename_prefix="rousseau_works")
+    # Display a subtle success message if loaded (optional)
+    # st.toast("Text index loaded successfully.", icon="✅")
 except Exception as e:
-    st.error(f"Error loading index: {e}")
-    st.warning("Please ensure the index files are present and accessible, or run the indexer script.")
-    index = None # Ensure index is None if loading fails
+    st.error(f"Failed to load the text index: {e}")
+    st.warning("Ensure index files are present or run the indexer script.")
+    index = None
     chunks = None
 
 if index is None or chunks is None:
-    st.error("Index data not loaded. Cannot proceed.")
-    # Optionally: Add instructions or a button to trigger indexing if feasible
-    # st.button("Run Indexer (Requires Setup)")
+    st.error("Index data could not be loaded. Querying is disabled.")
 else:
-    st.markdown("### 🤔 Ask Your Question")
+    st.markdown("### Ask Your Question") # Keep this clear and direct
     question = st.text_input(
         "Enter your political philosophy question:",
-        placeholder="e.g., What does Rousseau say about the general will?"
+        placeholder="e.g., What is Rousseau's concept of the general will?",
+        label_visibility="collapsed" # Hides the label above, cleaner look
     )
 
-    ask_button = st.button("Submit Question", type="primary")
+    # Use a less "primary" button for a softer look, change text slightly
+    ask_button = st.button("Seek Insight") # More evocative text
 
     if ask_button and question:
-        with st.spinner("🧠 Thinking and searching the texts..."):
+        # Use a more thematic spinner message
+        with st.spinner("Consulting the texts..."):
             try:
                 answer = ask_question(question, index, chunks)
-                st.subheader("💡 Answer", divider="grey")
-                with st.container(border=True):
-                    st.markdown(answer) # Use markdown to render potential formatting in the answer
+                # Use a more neutral subheader for the answer
+                st.subheader("Response", divider="grey") # Changed from "Answer", use grey divider
+                # Remove the border from the container for a cleaner look
+                with st.container():
+                    st.markdown(answer)
             except Exception as e:
-                st.error(f"An error occurred while generating the answer: {e}")
+                st.error(f"An error occurred while generating the response: {e}")
     elif ask_button and not question:
-        st.warning("Please enter a question first.")
+        st.warning("Please enter a question to explore.") # Slightly softer warning
 
 # --- Footer ---
 st.divider()
-st.markdown("---")
-st.markdown("Built by [Arthur Oker](https://www.linkedin.com/in/arthuroker)")
+st.caption("Developed by [Arthur Oker](https://www.linkedin.com/in/arthuroker)") # Use 
