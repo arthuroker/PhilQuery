@@ -4,9 +4,15 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 import pickle
+import streamlit as st
 
 # Load the .env file
 load_dotenv()
+
+client = OpenAI(
+    api_key=os.getenv("GROQ_API_KEY", st.secrets.get("GROQ_API_KEY", "")),
+    base_url="https://api.groq.com/openai/v1"
+)
 
 # Load Groq API Key
 OpenAI.api_base = "https://api.groq.com/openai/v1"
