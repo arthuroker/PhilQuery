@@ -3,6 +3,7 @@ import faiss
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
+import pickle
 
 # Load the .env file
 load_dotenv()
@@ -15,7 +16,7 @@ OpenAI.api_key = os.getenv("GROQ_API_KEY")
 embedder = SentenceTransformer('all-MiniLM-L6-v2')
 
 # Load and chunk text
-def load_text_chunks(filepath, chunk_size = 500):
+def load_text_chunks(filepath, chunk_size = 800):
     
     with open(filepath, 'r', encoding = 'utf-8') as f:
         full_text = f.read()
@@ -38,6 +39,19 @@ def build_faiss_index(chunks):
 
     return index, embeddings, chunks
 
+def save_index(index, embeddings, chunks, filename_prefix="cached"):
+    faiss.write_index(index, f"{filename_prefix}.index")
+    with open(f"{filename_prefix}_chunks.pkl", "wb") as f:
+        pickle.dump(chunks, f)
+
+def load_index(filename_prefix="cached"):
+    if os.path.exists(f"{filename_prefix}.index") and os.path.exists(f"{filename_prefix}_chunks.pkl"):
+        index = faiss.read_index(f"{filename_prefix}.index")
+        with open(f"{filename_prefix}_chunks.pkl", "rb") as f:
+            chunks = pickle.load(f)
+        return index, chunks
+    return None, None
+
 def ask_question(question, index, chunks):
     # Embed the question
     question_embedding = embedder.encode([question])
@@ -51,13 +65,22 @@ def ask_question(question, index, chunks):
     context = "\n\n---\n\n".join(top_chunks)
 
     # Prompt template
-    prompt = f"""Answer the question using only the context provided. Cite anything you reference clearly by giving the first 5 words from the quote you are drawing from.
+    prompt = f"""**Role:** You are a research assistant specializing in philosophy.
+**Task:** Answer the question accurately using *only* the information present in the provided 'Context'. Do not introduce any external knowledge or interpretations.
 
-Context:
+**Instructions:**
+1.  Base your entire answer strictly on the provided 'Context'.
+2.  When explaining a point or concept drawn from the context, integrate a key, concise quote from the relevant passage directly into your sentence to provide evidence and grounding. Structure your sentences like: "The context explains that [concept] is based on [idea], stating that it '...'." or "Regarding [topic], the text notes '...'."
+3.  Ensure the integrated quote clearly supports the point being made and flows naturally within the sentence.
+4.  Present the answer in a clear, analytical, and neutral tone.
+
+**Context:**
 {context}
 
-Question: {question}
-Answer:"""
+**Question:** {question}
+
+**Answer:**
+"""
 
     # Use Groq-compatible OpenAI client
     client = OpenAI(
@@ -76,13 +99,20 @@ Answer:"""
 
 
 def main():
-    print("Loading and indexing philosophy text...")
+    print("Checking for cached index...")
 
-    filepath = os.path.join("data", "rawls.txt")
-    chunks = load_text_chunks(filepath)
-    index, embeddings, chunks = build_faiss_index(chunks)
+    index, chunks = load_index()
 
-    print(f"Indexed {len(chunks)} chunks.")
+    if index is not None and chunks is not None:
+        print(f"Loaded {len(chunks)} chunks from cache.")
+    else:
+        print("No cache found. Building index from scratch...")
+
+        filepath = os.path.join("data", "social_contract_rousseau.txt") 
+        chunks = load_text_chunks(filepath)
+        index, embeddings, chunks = build_faiss_index(chunks)
+        save_index(index, embeddings, chunks)
+        print(f"Indexed and cached {len(chunks)} chunks.")
 
     # Ask a question
     question = input("Ask your political philosophy question: ")
