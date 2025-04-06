@@ -56,6 +56,9 @@ def load_index(filename_prefix="cached"):
     return None, None
 
 def ask_question(question, index, chunks):
+    
+    if embedder is None:
+        raise RuntimeError("Embedder not available. This function should not run on Streamlit Cloud.")
     # Embed the question
     question_embedding = embedder.encode([question])
 
