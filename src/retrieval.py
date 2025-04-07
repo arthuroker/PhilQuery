@@ -1,22 +1,26 @@
 from .config import client
 
 def ask_question(question, index, chunk_store, top_k=3, embed_func=None):
-
     if embed_func is None:
         return "Error: Embedding function not available on cloud. Please run locally with PHILQUERY_MODE=embed."
-    
+
     question_embedding = embed_func([question])
 
     D, I = index.search(question_embedding, top_k)
 
     context_parts = []
     citations = []
+
     for i, idx in enumerate(I[0]):
         item = chunk_store[idx]
         meta = item['metadata']
-        context_parts.append(f"Source {i+1} (Title: {meta.get('source_title')}, Author: {meta.get('author')}):\n{item['text']}")
+        context_parts.append(
+            f"Source {i+1} (Title: {meta.get('source_title')}, Author: {meta.get('author')}):\n{item['text']}"
+        )
         excerpt = item['text'][:60].strip()
-        citations.append(f"[{i+1}] {meta['source_title']} by {meta['author']} - (Excerpt: \"{excerpt}...\")")
+        citations.append(
+            f"[{i+1}] {meta.get('source_title')} by {meta.get('author')} - (Excerpt: \"{excerpt}...\")"
+        )
 
     context = "\n\n---\n\n".join(context_parts)
 

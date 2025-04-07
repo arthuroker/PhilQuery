@@ -16,7 +16,6 @@ if project_root not in sys.path:
 # --- Now your original imports should work ---
 from src.retrieval import ask_question
 from src.indexing import load_index
-from src.embedder import embed_texts
 import streamlit as st
 
 @st.cache_resource
