@@ -1,7 +1,12 @@
 from .config import client
 
-def ask_question(question, index, chunk_store, embed_func, top_k=3):
+def ask_question(question, index, chunk_store, top_k=3, embed_func=None):
+
+    if embed_func is None:
+        return "Error: Embedding function not available on cloud. Please run locally with PHILQUERY_MODE=embed."
+    
     question_embedding = embed_func([question])
+
     D, I = index.search(question_embedding, top_k)
 
     context_parts = []

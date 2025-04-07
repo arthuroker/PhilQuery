@@ -99,7 +99,7 @@ else:
     if ask_button and question:
         with st.spinner("Consulting the texts..."):
             try:
-                answer = ask_question(question, index, chunks, embed_func=embed_texts)
+                answer = ask_question(question, index, chunks)
                 st.subheader("Response", divider="grey")
                 with st.container():
                     st.markdown(answer)
