@@ -1,10 +1,9 @@
 from .config import client
+from .embedder import embed_texts
 
-def ask_question(question, index, chunk_store, top_k=3, embed_func=None):
-    if embed_func is None:
-        return "Error: Embedding function not available on cloud. Please run locally with PHILQUERY_MODE=embed."
+def ask_question(question, index, chunk_store, top_k=3):
 
-    question_embedding = embed_func([question])
+    question_embedding = embed_texts([question])
 
     D, I = index.search(question_embedding, top_k)
 
@@ -19,7 +18,8 @@ def ask_question(question, index, chunk_store, top_k=3, embed_func=None):
         )
         excerpt = item['text'][:60].strip()
         citations.append(
-            f"[{i+1}] {meta.get('source_title')} by {meta.get('author')} - (Excerpt: \"{excerpt}...\")"
+            f"[{i+1}] {meta.get('source_title')} by {meta.get('author')} "
+            f"(Excerpt: \"{excerpt}...\")"
         )
 
     context = "\n\n---\n\n".join(context_parts)
@@ -42,4 +42,5 @@ Answer:"""
         temperature=0.2
     )
     answer = response.choices[0].message.content.strip()
+
     return f"{answer}\n\n---\n**Sources Consulted:**\n" + "\n".join(citations)
