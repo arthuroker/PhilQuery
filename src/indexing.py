@@ -33,5 +33,6 @@ def load_index(prefix):
         if index.ntotal != len(chunks):
             return None, None
         return index, chunks
-    except:
-        return None, None
+    except Exception as e:
+      print(f"Error loading index: {e}")
+      return None, None

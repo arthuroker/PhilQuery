@@ -82,44 +82,31 @@ with st.expander("Understanding the Process ⚙️"): # Slightly softer title
 st.divider()
 
 # --- Main Application Logic ---
-try:
-    # Attempt to load the index and chunks
-    index, chunks = load_index(prefix="rousseau_works")
-    # Display a subtle success message if loaded (optional)
-    # st.toast("Text index loaded successfully.", icon="✅")
-except Exception as e:
-    st.error(f"Failed to load the text index: {e}")
-    st.warning("Ensure index files are present or run the indexer script.")
-    index = None
-    chunks = None
+index, chunks = get_index()
 
 if index is None or chunks is None:
     st.error("Index data could not be loaded. Querying is disabled.")
 else:
-    st.markdown("### Ask Your Question") # Keep this clear and direct
+    st.markdown("### Ask Your Question")
     question = st.text_input(
         "Enter your political philosophy question:",
         placeholder="e.g., What is Rousseau's concept of the general will?",
-        label_visibility="collapsed" # Hides the label above, cleaner look
+        label_visibility="collapsed"
     )
 
-    # Use a less "primary" button for a softer look, change text slightly
-    ask_button = st.button("Seek Insight") # More evocative text
+    ask_button = st.button("Seek Insight")
 
     if ask_button and question:
-        # Use a more thematic spinner message
         with st.spinner("Consulting the texts..."):
             try:
                 answer = ask_question(question, index, chunks, embed_func=embed_texts)
-                # Use a more neutral subheader for the answer
-                st.subheader("Response", divider="grey") # Changed from "Answer", use grey divider
-                # Remove the border from the container for a cleaner look
+                st.subheader("Response", divider="grey")
                 with st.container():
                     st.markdown(answer)
             except Exception as e:
                 st.error(f"An error occurred while generating the response: {e}")
     elif ask_button and not question:
-        st.warning("Please enter a question to explore.") # Slightly softer warning
+        st.warning("Please enter a question to explore.")
 
 # --- Footer ---
 st.divider()
