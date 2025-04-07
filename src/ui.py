@@ -1,5 +1,23 @@
+# C:\Users\arthur\Documents\PhilQuery\src\ui.py
+
+import sys
+import os
+
+# Get the absolute path of the directory containing this file (ui.py), which is 'src'
+src_dir = os.path.dirname(os.path.abspath(__file__))
+# Get the absolute path of the directory containing 'src', which is the project root 'PhilQuery'
+project_root = os.path.dirname(src_dir)
+
+# Add the project root directory to the beginning of Python's search path
+# if it's not already there. This ensures Python can find the 'src' package.
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+# --- Now your original imports should work ---
+from src.retrieval import ask_question
+from src.indexing import load_index # Assuming you need this too
+from src.embedder import embed_texts
 import streamlit as st
-from main import load_index, ask_question # Assuming these functions exist in main.py
 
 # --- Page Configuration ---
 # Use a more serene icon like a scroll or bamboo
@@ -60,7 +78,7 @@ st.divider()
 # --- Main Application Logic ---
 try:
     # Attempt to load the index and chunks
-    index, chunks = load_index(filename_prefix="rousseau_works")
+    index, chunks = load_index(prefix="rousseau_works")
     # Display a subtle success message if loaded (optional)
     # st.toast("Text index loaded successfully.", icon="✅")
 except Exception as e:
@@ -86,7 +104,7 @@ else:
         # Use a more thematic spinner message
         with st.spinner("Consulting the texts..."):
             try:
-                answer = ask_question(question, index, chunks)
+                answer = ask_question(question, index, chunks, embed_func=embed_texts)
                 # Use a more neutral subheader for the answer
                 st.subheader("Response", divider="grey") # Changed from "Answer", use grey divider
                 # Remove the border from the container for a cleaner look
