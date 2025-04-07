@@ -2,21 +2,24 @@
 
 import sys
 import os
+import streamlit as st
 
-# Get the absolute path of the directory containing this file (ui.py), which is 'src'
+
 src_dir = os.path.dirname(os.path.abspath(__file__))
-# Get the absolute path of the directory containing 'src', which is the project root 'PhilQuery'
 project_root = os.path.dirname(src_dir)
-
-# Add the project root directory to the beginning of Python's search path
-# if it's not already there. This ensures Python can find the 'src' package.
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-# --- Now your original imports should work ---
 from src.retrieval import ask_question
 from src.indexing import load_index
-import streamlit as st
+
+st.set_page_config(
+    page_title="PhilQuery 📜",
+    page_icon="📜", # Scroll emoji for a classic, scholarly feel
+    layout="centered",
+    initial_sidebar_state="auto"
+)
+
 
 @st.cache_resource
 def get_index():
@@ -24,14 +27,7 @@ def get_index():
 
 index, chunks = get_index()
 
-# --- Page Configuration ---
-# Use a more serene icon like a scroll or bamboo
-st.set_page_config(
-    page_title="PhilQuery 📜",
-    page_icon="📜", # Scroll emoji for a classic, scholarly feel
-    layout="centered",
-    initial_sidebar_state="auto"
-)
+
 
 # --- Header ---
 # Use st.title for a cleaner main heading, remove the divider argument
