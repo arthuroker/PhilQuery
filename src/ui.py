@@ -1,6 +1,6 @@
-# C:\Users\arthur\Documents\PhilQuery\src\ui.py
-
 import streamlit as st
+
+# This must be the first Streamlit command
 st.set_page_config(
     page_title="PhilQuery 📜",
     page_icon="📜",
@@ -19,22 +19,17 @@ if project_root not in sys.path:
 from src.retrieval import ask_question
 from src.indexing import load_index
 
-# Rest of your code remains the same...
 @st.cache_resource
 def get_index():
-    return load_index(prefix="rousseau_works")  
+    return load_index(prefix="rousseau_works")
 
 index, chunks = get_index()
 
-
-
 # --- Header ---
-# Use st.title for a cleaner main heading, remove the divider argument
 st.title("PhilQuery 📜")
-# Slightly refined caption
 st.caption("An AI assistant for exploring political philosophy texts, by Arthur Oker.")
 
-st.divider() # Use a simple divider for separation
+st.divider()
 
 # --- Introduction & Knowledge Base ---
 col1, col2 = st.columns([3, 2]) # Slightly adjust column ratio if desired
@@ -76,7 +71,6 @@ with st.expander("Understanding the Process ⚙️"): # Slightly softer title
 st.divider()
 
 # --- Main Application Logic ---
-index, chunks = get_index()
 
 if index is None or chunks is None:
     st.error("Index data could not be loaded. Querying is disabled.")
