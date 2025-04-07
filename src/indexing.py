@@ -20,9 +20,9 @@ def build_faiss_index(chunks):
     index.add(embeddings)
     return index, chunks
 
-def save_index(index, chunks, prefix):
-    faiss.write_index(index, f"{prefix}.index")
-    with open(f"{prefix}_chunk_store.pkl", "wb") as f:
+def save_index(index, chunks, filename_prefix="cached"):
+    faiss.write_index(index, f"{filename_prefix}.index")
+    with open(f"{filename_prefix}_chunk_store.pkl", "wb") as f:
         pickle.dump(chunks, f)
 
 def load_index(prefix):

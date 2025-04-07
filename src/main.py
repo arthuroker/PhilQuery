@@ -9,11 +9,10 @@ def main():
 
     if index is None:
         print("Building index from scratch...")
-        chunks = load_and_chunk_with_metadata(
-            os.path.join(DATA_DIR, "social_contract_rousseau.txt"),
-            {"source_title": "The Social Contract", "author": "Jean-Jacques Rousseau"}
-        )
-        index, chunk_store = build_faiss_index(chunks)
+        index, chunk_store = load_index("rousseau_works")
+        if index is None:
+            print("No index found. Please run `build_index.py` first.")
+            return
         save_index(index, chunk_store, CACHE_PREFIX)
 
     while True:

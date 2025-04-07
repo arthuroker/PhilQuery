@@ -15,9 +15,15 @@ if project_root not in sys.path:
 
 # --- Now your original imports should work ---
 from src.retrieval import ask_question
-from src.indexing import load_index # Assuming you need this too
+from src.indexing import load_index
 from src.embedder import embed_texts
 import streamlit as st
+
+@st.cache_resource
+def get_index():
+    return load_index(prefix="rousseau_works")  
+
+index, chunks = get_index()
 
 # --- Page Configuration ---
 # Use a more serene icon like a scroll or bamboo

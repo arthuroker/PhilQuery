@@ -15,12 +15,17 @@ def ask_question(question, index, chunk_store, embed_func, top_k=3):
 
     context = "\n\n---\n\n".join(context_parts)
 
-    prompt = f"""**Role:** You are a research assistant...
-**Context:**
+    prompt = f"""You are a research assistant specializing in political philosophy.
+
+Use *only* the provided context to answer the question. For every claim, include a short direct quote and refer to its source number.
+
+Format your answer clearly and analytically.
+
+Context:
 {context}
 
-**Question:** {question}
-**Answer:**"""
+Question: {question}
+Answer:"""
 
     response = client.chat.completions.create(
         model="llama3-70b-8192",
