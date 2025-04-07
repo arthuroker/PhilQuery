@@ -19,7 +19,6 @@ def main():
                 "author": "Jean-Jacques Rousseau"
             }
         },
-        # Add more sources here if needed
     ]
 
     all_chunks = []
