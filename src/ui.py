@@ -27,7 +27,6 @@ index, chunks = get_index()
 
 # --- Header ---
 st.title("PhilQuery 📜")
-st.caption("An AI assistant for exploring political philosophy texts, by Arthur Oker.")
 
 st.divider()
 
