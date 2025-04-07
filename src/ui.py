@@ -1,9 +1,15 @@
 # C:\Users\arthur\Documents\PhilQuery\src\ui.py
 
+import streamlit as st
+st.set_page_config(
+    page_title="PhilQuery 📜",
+    page_icon="📜",
+    layout="centered",
+    initial_sidebar_state="auto"
+)
+
 import sys
 import os
-import streamlit as st
-
 
 src_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(src_dir)
@@ -13,14 +19,7 @@ if project_root not in sys.path:
 from src.retrieval import ask_question
 from src.indexing import load_index
 
-st.set_page_config(
-    page_title="PhilQuery 📜",
-    page_icon="📜", # Scroll emoji for a classic, scholarly feel
-    layout="centered",
-    initial_sidebar_state="auto"
-)
-
-
+# Rest of your code remains the same...
 @st.cache_resource
 def get_index():
     return load_index(prefix="rousseau_works")  
