@@ -13,9 +13,30 @@ def main():
     data_dir = "data"
     sources = [
         {
-            "filepath": os.path.join(data_dir, "social_contract_rousseau.txt"),
+            "filepath": os.path.join(data_dir, "The Social Contract by John Jacques Rousseau.txt"),
             "metadata": {
                 "source_title": "The Social Contract",
+                "author": "Jean-Jacques Rousseau"
+            }
+        },
+                {
+            "filepath": os.path.join(data_dir, "A Discourse on Political Economy by John Jacques Rousseau.txt"),
+            "metadata": {
+                "source_title": "A Discourse on Political Economy",
+                "author": "Jean-Jacques Rousseau"
+            }
+        },
+                {
+            "filepath": os.path.join(data_dir, "A Discourse on the Origin and Basis of Inequality Among Men by John Jacques Rousseau .txt"),
+            "metadata": {
+                "source_title": "A Discourse on the Origin and Basis of Inequality Among Men",
+                "author": "Jean-Jacques Rousseau"
+            }
+        },
+                {
+            "filepath": os.path.join(data_dir, "A Discourse on the Sciences and Arts by John Jacques Rousseau .txt"),
+            "metadata": {
+                "source_title": "A Discourse on the Sciences and Arts by John Jacques Rousseau",
                 "author": "Jean-Jacques Rousseau"
             }
         },
