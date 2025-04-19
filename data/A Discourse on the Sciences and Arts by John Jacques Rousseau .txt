@@ -1,18 +1,4 @@
-﻿A DISCOURSE
-
-
-WHICH WON THE PRIZE AT THE ACADEMY OF DIJON IN 1750, ON THIS QUESTION
-PROPOSED BY THE ACADEMY:
-
-
-HAS THE RESTORATION OF THE ARTS AND SCIENCES HAD A PURIFYING EFFECT
-UPON MORALS?
-
-
-Barbaras his ego sum, qui non intelligor illis.--OVID.[1]
-
-
-[1] Here I am, a barbarian, because men understand me not.
+﻿A DISCOURSE ON THE ARTS AND SCIENCES
 
 
 
@@ -63,13 +49,7 @@ to demand this acknowledgment.
 
 
 
-MORAL EFFECTS
-
-
-OF THE ARTS AND SCIENCES
-
-
-_Decipimur specie recti_.--HORACE.
+MORAL EFFECTS OF THE ARTS AND SCIENCES
 
 
 
@@ -414,8 +394,8 @@ am.
 
 
 "None of us, neither the sophists, nor the poets, nor the orators, nor
-the artists, nor I, know what is the nature of the _true_, the _good_,
-or the _beautiful_. But there is this difference between us; that,
+the artists, nor I, know what is the nature of the true, the good,
+or the beautiful. But there is this difference between us; that,
 though none of these people know anything, they all think they know
 something; whereas for my part, if I know nothing, I am at least in no
 doubt of my ignorance. So the superiority of wisdom, imputed to me by
@@ -517,56 +497,6 @@ to admit the truth of all those points on which our arguments coincide
 with the inductions we can make from history.
 
 
-
-
-[1] Sovereigns always see with, pleasure a taste for the arts of
-amusement and superfluity, which do not result in the exportation of
-bullion, increase among their subjects. They very well know that,
-besides nourishing that littleness of mind which is proper to slavery,
-the increase of artificial wants only binds so many more chains upon
-the people. Alexander, wishing to keep the Ichthyophages in a state
-of dependence, compelled them to give up fishing, and subsist on the
-customary food of civilised nations. The American savages, who go
-naked, and live entirely on the products of the chase, have been always
-impossible to subdue. What yoke, indeed, can be imposed on men who
-stand in need of nothing?
-
-
-[2] "I love," said Montaigne, "to converse and hold an argument; but
-only with very few people, and that for my own gratification. For to do
-so, by way of affording amusement for the great, or of making a parade
-of one's talents, is, in my opinion, a trade very ill-becoming a man of
-honour." It is the trade of all our intellectuals, save one.
-
-
-[3] I dare not speak of those happy nations, who did not even know the
-name of many vices, which we find it difficult to suppress; the savages
-of America, whose simple and natural mode of government Montaigne
-preferred, without hesitation, not only to the laws of Plato, but to
-the most perfect visions of government philosophy can ever suggest He
-cites many examples, striking for those who are capable of appreciating
-them. But, what of all that, says he, they can't run to a pair of
-breeches!
-
-
-[4] What are we to think was the real opinion of the Athenians
-themselves about eloquence, when they were so very careful to banish
-declamation from that upright tribunal, against whose decision even
-their gods made no appeal? What did the Romans think of physicians,
-when they expelled medicine from the republic? And when the relics of
-humanity left among the Spaniards induced them to forbid their lawyers
-to set foot in America, what must they have thought of jurisprudence?
-May it not be said that they thought, by this single expedient, to make
-reparation for all the outrages they had committed against the unhappy
-Indians?
-
-
-
-
-
-
-
-
 THE SECOND PART
 
 
@@ -574,7 +504,7 @@ THE SECOND PART
 
 An ancient tradition passed out of Egypt into Greece, that some god,
 who was an enemy to the repose of mankind, was the inventor of the
-sciences.[1] What must the Egyptians, among whom the sciences first
+sciences. What must the Egyptians, among whom the sciences first
 arose, have thought of them? And they beheld, near at hand, the sources
 from which they sprang. In fact, whether we turn to the annals of the
 world, or eke out with philosophical investigations the uncertain
@@ -1050,50 +980,6 @@ endeavour to make, between them and us, that honourable distinction
 which was formerly seen to exist between two great peoples, that the
 one knew how to speak, and the other how to act, aright.
 
-
-
-
-[1] It is easy to see the allegory in the fable of Prometheus: and it
-does not appear that the Greeks, who chained him to the Caucasus, had a
-better opinion of him than the Egyptians had of their god Theutus. The
-Satyr, says an ancient fable, the first time he saw a fire, was going
-to kiss and embrace it; but Prometheus cried out to him to forbear, or
-his beard would rue it. It burns, says he, everything that touches it.
-
-
-[2] The less we know, the more we think we know. The peripatetics
-doubted of nothing. Did not Descartes construct the universe with cubes
-and vortices? And is there in all Europe one single physicist who does
-not boldly explain the inexplicable mysteries of electricity, which
-will, perhaps, be for ever the despair of real philosophers?
-
-
-[3] I am far from thinking that the ascendancy which women have
-obtained over men is an evil in itself. It is a present which nature
-has made them for the good of mankind. If better directed, it might
-be productive of as much good, as it is now of evil. We are not
-sufficiently sensible of what advantage it would be to society to
-give a better education to that half of our species which governs the
-other. Men will always be what women choose to make them. If you wish
-then that they should be noble and virtuous, let women be taught what
-greatness of soul and virtue are. The reflections which this subject
-arouses, and which Plato formerly made, deserve to be more fully
-developed by a pen worthy of following so great a master, and defending
-so great a cause.
-
-
-[4] Pensées philosophiques (Diderot).
-
-
-[5] Such was the education of the Spartans with regard to one of the
-greatest of their-kings. It is well worthy of notice, says Montaigne,
-that the excellent institutions of Lycurgus, which were in truth
-miraculously perfect, paid as much attention to the bringing up of
-youth as if this were their principal object, and yet, at the very seat
-of the Muses, they make so little mention of learning that it seems as
-if their generous-spirited youth disdained every other restraint, and
-required, instead of masters of the sciences, instructors in valour,
-prudence and justice alone.
 
 
 Let us hear next what the same writer says of the ancient Persians.
