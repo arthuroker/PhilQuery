@@ -1,6 +1,8 @@
 import os, pickle, faiss
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, logging
 from .embedder import embed_texts
+
+logging.set_verbosity_error()
 
 def load_and_chunk_with_metadata(filepath, metadata, chunk_size = 800):
     
@@ -14,11 +16,14 @@ def load_and_chunk_with_metadata(filepath, metadata, chunk_size = 800):
 
 def split_to_token_chunks(text: str, tokenizer, max_len: int):
     
-    ids = tokenizer.encode(text, add_special_tokens=False)
+    token_ids = tokenizer.convert_tokens_to_ids(
+        tokenizer.tokenize(text, add_special_tokens=False)
+    )
     chunks = []
-    for start in range(0, len(ids), max_len):
-        sub_ids = ids[start : start + max_len]
-        chunks.append(tokenizer.decode(sub_ids, clean_up_tokenization_spaces=True))
+    for start in range(0, len(token_ids), max_len):
+        sub = token_ids[start:start + max_len]
+        chunks.append(tokenizer.decode(sub, clean_up_tokenization_spaces=True))
+
     return chunks
 
 def section_chunker(filepath: str, metadata: dict, section_headers, chunk_size_tokens: int):
@@ -45,11 +50,6 @@ def section_chunker(filepath: str, metadata: dict, section_headers, chunk_size_t
 
          target_max_len = min(chunk_size_tokens, 1)
          if target_max_len <=0: return [] 
-
-
-    print(f"Using effective chunk size (tokens): {target_max_len} "
-          f"(Requested: {chunk_size_tokens}, Model Limit: {tokenizer.model_max_length}, "
-          f"Adjusted for {num_special_tokens} special tokens)")
 
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
@@ -114,6 +114,10 @@ def section_chunker(filepath: str, metadata: dict, section_headers, chunk_size_t
                             "text": chunk_text,
                             "metadata": {**metadata, "section_title": section.strip()} # Add cleaned section title
                         })
+
+    for c in all_chunks:
+        n = len(tokenizer.encode(c["text"], add_special_tokens=False))
+        assert n <= target_max_len, f"Chunk too long: {n} tokens"
 
     return all_chunks
 

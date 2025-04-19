@@ -120,7 +120,7 @@ def main():
             filepath=src["filepath"],
             metadata=src["metadata"],
             section_headers=src["section_headers"],
-            chunk_size_tokens=400
+            chunk_size_tokens=450
         )
         all_chunks.extend(chunks)
 
