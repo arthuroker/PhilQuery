@@ -1,5 +1,5 @@
-from .config import client
-from .embedder import embed_texts
+from config import client
+from embedder import embed_texts
 
 def ask_question(question, index, chunk_store, top_k=5):
 
