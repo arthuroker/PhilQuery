@@ -26,9 +26,18 @@ def ask_question(question, index, chunk_store, top_k=5):
 
     prompt = f"""You are a research assistant specializing in political philosophy.
 
-Use *only* the provided context to answer the question. For every claim, include a short direct quote and refer to its source number.
+Your goal is to synthesize Rousseau's views on the topic asked in the question, using *only* the provided context.
 
-Format your answer clearly and analytically.
+Instructions:
+1.  Carefully read the provided context sections.
+2.  Identify the main themes or categories related to the question within the context.
+3.  Begin your response with a concise introductory sentence summarizing the overall topic (e.g., "Based on the provided context, Rousseau's views on [Topic] can be summarized as follows:").
+4.  Organize the main body of your answer using clear thematic headings based on the categories you identified (e.g., "Theme 1:", "Theme 2:", etc.).
+5.  Under each heading, summarize Rousseau's points on that theme using information *only* from the context.
+6.  For the information presented under each theme, **cite the relevant source number(s)** (e.g., Source 1, Source 3). Direct quotes are optional, focus on accurate summarization and citation.
+7.  Conclude with a brief overall summary paragraph synthesizing Rousseau's main position on the topic, based solely on the provided context.
+8.  Format your answer clearly and analytically. Do not include any information not present in the context.
+9.  If you feel you don't have enough information for the user, then explain so and do not answer the question.
 
 Context:
 {context}
@@ -37,8 +46,9 @@ Question: {question}
 Answer:"""
 
     response = client.chat.completions.create(
-        model="llama3-70b-8192",
-        messages=[{"role": "user", "content": prompt}],
+        model="llama-3.1-8b-instant",
+        messages=[{"role": "user", "content": prompt},
+                  {"role": "system", "content": "You are a helpful assistant specializing in political philosophy. Focus on Rousseau, cite his texts, and explain things clearly."}],
         temperature=0.2
     )
     answer = response.choices[0].message.content.strip()

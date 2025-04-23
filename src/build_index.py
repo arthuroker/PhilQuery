@@ -230,8 +230,28 @@ def main():
     if not all_chunks:
         print("❌ No chunks found. Exiting.")
         return
+    
 
-    index, chunk_store = build_faiss_index(all_chunks)
+    print("\nStarting de-duplication process...")
+    unique_chunks_list = []
+    seen_texts = set() 
+
+    for chunk in all_chunks:
+        chunk_text = chunk.get('text', '').strip()
+
+        if chunk_text and chunk_text not in seen_texts:
+            unique_chunks_list.append(chunk)
+            seen_texts.add(chunk_text)
+
+
+    print(f"\nOriginal chunk count: {len(all_chunks)}")
+    print(f"Unique chunk count after de-duplication: {len(unique_chunks_list)}")
+
+
+
+    index, chunk_store = build_faiss_index(unique_chunks_list)
+
+
 
     if index is not None and chunk_store is not None:
         save_index(index, chunk_store, filename_prefix="rousseau_works")
