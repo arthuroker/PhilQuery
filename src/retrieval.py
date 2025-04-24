@@ -38,6 +38,7 @@ Instructions:
 7.  Conclude with a brief overall summary paragraph synthesizing Rousseau's main position on the topic, based solely on the provided context.
 8.  Format your answer clearly and analytically. Do not include any information not present in the context.
 9.  If you feel you don't have enough information for the user, then explain so and do not answer the question.
+10. Never quote the full source in the acutal answer, the sources are show in another place
 
 Context:
 {context}
