@@ -18,8 +18,8 @@ def ask_question(question, index, chunk_store, top_k=5):
         )
         excerpt = item['text'][:60].strip()
         citations.append(
-            f"[{i+1}] {meta.get('source_title')} by {meta.get('author')} "
-            f"(Excerpt: \"{excerpt}...\")"
+            f"[{i+1}] {meta.get('source_title')} by {meta.get('author')} \n"
+            f"(Excerpt: \"{excerpt}...\")\n"
         )
 
     context = "\n\n---\n\n".join(context_parts)
@@ -54,4 +54,4 @@ Answer:"""
     )
     answer = response.choices[0].message.content.strip()
 
-    return f"{answer}\n\n---\n**Sources Consulted:**\n" + "\n".join(citations)
+    return f"{answer}\n\n---\n**Sources Consulted:**\n" + "\n\n".join(citations)
