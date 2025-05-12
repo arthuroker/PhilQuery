@@ -76,18 +76,56 @@ if index is None or chunks is None:
     st.error("Index data could not be loaded. Querying is disabled.")
 else:
     st.markdown("### Ask Your Question")
+    
+    # Add slider for number of chunks
+    num_chunks = st.slider(
+        "Number of source passages to consider",
+        min_value=1,
+        max_value=10,
+        value=5,
+        help="Adjust how many relevant passages from the texts should be used to generate the answer"
+    )
+    
+    with st.expander("ℹ️ Understanding the number of passages"):
+        st.markdown("""
+        **Fewer passages (1-3):**
+        - ✅ More focused and concise answers
+        - ✅ Better for specific, targeted questions
+        - ❌ May miss relevant context from other parts of the text
+        - ❌ Could lead to incomplete or biased responses
+
+        **More passages (7-10):**
+        - ✅ Broader context and more comprehensive answers
+            - ✅ Better for complex topics that span multiple sections
+            - ✅ More likely to capture nuanced relationships between ideas
+        - ❌ May include less relevant information
+        - ❌ Responses might be longer and more verbose
+        - ❌ Could potentially dilute the most relevant insights
+
+        **Medium (4-6):**
+        - ✅ Good balance between focus and comprehensiveness
+        - ✅ Suitable for most general questions
+        - ✅ Default setting for optimal results
+        """)
+
     question = st.text_input(
         "Enter your political philosophy question:",
         placeholder="e.g., What is Rousseau's concept of the general will?",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="question_input"
     )
 
-    ask_button = st.button("Seek Insight")
+    col1, col2 = st.columns([1, 5])
+    with col1:
+        ask_button = st.button("Seek Insight")
+    with col2:
+        st.write("")  # Empty space for alignment
 
-    if ask_button and question:
+    # Check for both button click and Enter key
+    if (ask_button or (question and st.session_state.question_input != "")) and question:
         with st.spinner("Consulting the texts..."):
             try:
-                answer = ask_question(question, index, chunks)
+                answer = ask_question(question, index, chunks, top_k=num_chunks)
                 st.subheader("Response", divider="grey")
                 with st.container():
                     st.markdown(answer)
