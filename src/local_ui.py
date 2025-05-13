@@ -77,6 +77,14 @@ if index is None or chunks is None:
 else:
     st.markdown("### Ask Your Question")
     
+    # Add mode selector
+    mode = st.radio(
+        "Select mode:",
+        ["understanding", "retrieval"],
+        horizontal=True,
+        help="Understanding: Get a comprehensive analysis of the topic\nRetrieval: Find specific passages related to your query"
+    )
+    
     # Add slider for number of chunks
     num_chunks = st.slider(
         "Number of source passages to consider",
@@ -125,7 +133,7 @@ else:
     if (ask_button or (question and st.session_state.question_input != "")) and question:
         with st.spinner("Consulting the texts..."):
             try:
-                answer = ask_question(question, index, chunks, top_k=num_chunks)
+                answer = ask_question(question, index, chunks, mode=mode, top_k=num_chunks)
                 st.subheader("Response", divider="grey")
                 with st.container():
                     st.markdown(answer)

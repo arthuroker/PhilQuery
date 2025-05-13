@@ -22,7 +22,7 @@ export default function Home() {
     setError(null)
 
     try {
-      const response = await api.askQuestion(query, chunkCount)
+      const response = await api.askQuestion(query, chunkCount, mode)
       
       // Parse sources
       const sources = response.sources.map(source => {

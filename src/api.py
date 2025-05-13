@@ -46,6 +46,7 @@ app.add_middleware(
 class Question(BaseModel):
     query: str
     chunk_count: int = 5  # Default to 5 if not specified
+    mode: str = "understanding"  # Default to understanding mode
 
 @app.get("/")
 def home():
@@ -58,8 +59,8 @@ def list_sources():
 @app.post("/ask")
 async def ask(question: Question):
     try:
-        logger.info(f"Received question: {question.query} with chunk_count: {question.chunk_count}")
-        full_response = ask_question(question.query, index, chunk_store, top_k=question.chunk_count)
+        logger.info(f"Received question: {question.query} with chunk_count: {question.chunk_count} and mode: {question.mode}")
+        full_response = ask_question(question.query, index, chunk_store, mode=question.mode, top_k=question.chunk_count)
         
         # Split the response into answer and sources
         parts = full_response.split("\n\n---\n**Sources Consulted:**\n\n")
