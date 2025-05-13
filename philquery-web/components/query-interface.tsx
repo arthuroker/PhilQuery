@@ -39,31 +39,29 @@ export default function QueryInterface({
       <div className="bg-surface rounded-lg p-6 border border-border">
         {/* Mode Switch */}
         <div className="flex justify-center mb-6">
-          <div className="inline-flex rounded-md p-1 bg-muted">
+          <div className="inline-flex rounded-md p-1 bg-muted/50 border border-border">
             <button
               type="button"
               className={cn(
-                "px-4 py-2 rounded-md text-base transition-all duration-300 ease-in-out relative",
-                mode === "understanding" ? "text-accent-foreground font-bold" : "text-secondary hover:text-primary",
+                "px-4 py-2 rounded-md text-base transition-all duration-200 ease-in-out relative",
+                mode === "understanding" 
+                  ? "bg-accent text-white font-medium shadow-sm" 
+                  : "text-muted-foreground hover:text-primary hover:bg-background/50"
               )}
               onClick={() => setMode("understanding")}
             >
-              {mode === "understanding" && (
-                <span className="absolute inset-0 bg-accent rounded-md -z-10 transition-all duration-300 ease-in-out"></span>
-              )}
               Understanding
             </button>
             <button
               type="button"
               className={cn(
-                "px-4 py-2 rounded-md text-base transition-all duration-300 ease-in-out relative",
-                mode === "retrieval" ? "text-accent-foreground font-bold" : "text-secondary hover:text-primary",
+                "px-4 py-2 rounded-md text-base transition-all duration-200 ease-in-out relative",
+                mode === "retrieval" 
+                  ? "bg-accent text-white font-medium shadow-sm" 
+                  : "text-muted-foreground hover:text-primary hover:bg-background/50"
               )}
               onClick={() => setMode("retrieval")}
             >
-              {mode === "retrieval" && (
-                <span className="absolute inset-0 bg-accent rounded-md -z-10 transition-all duration-300 ease-in-out"></span>
-              )}
               Retrieval
             </button>
           </div>
