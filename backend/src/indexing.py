@@ -1,6 +1,11 @@
 import os, pickle, faiss
 from transformers import AutoTokenizer, logging
 from .embedder import embed_texts
+import logging as py_logging
+
+# Set up logging
+py_logging.basicConfig(level=py_logging.INFO)
+logger = py_logging.getLogger(__name__)
 
 logging.set_verbosity_error()
 
@@ -27,98 +32,91 @@ def split_to_token_chunks(text: str, tokenizer, max_len: int):
     return chunks
 
 def section_chunker(filepath: str, metadata: dict, section_headers, chunk_size_tokens: int):
-
     try:
-        # Use a specific model known to work or handle potential errors
         tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased", use_fast=True)
-    
     except OSError:
-            print("Error loading tokenizer. Ensure 'bert-base-uncased' is available or choose another.")
-            return [] # Return empty list on tokenizer error
-
+        logger.error("Error loading tokenizer")
+        return []
 
     num_special_tokens = 2
-
     absolute_max_len = tokenizer.model_max_length - num_special_tokens
-
     target_max_len = min(chunk_size_tokens, absolute_max_len)
 
     if target_max_len <= 0:
-         print(f"Warning: Calculated target_max_len ({target_max_len}) is not positive. "
-               f"Model max length ({tokenizer.model_max_length}) might be too small or "
-               f"chunk_size_tokens ({chunk_size_tokens}) is too low.")
-
-         target_max_len = min(chunk_size_tokens, 1)
-         if target_max_len <=0: return [] 
+        logger.error(f"Invalid chunk size: {chunk_size_tokens} tokens")
+        return []
 
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
             raw = f.read()
-    except FileNotFoundError:
-        print(f"Error: File not found at {filepath}")
-        return []
     except Exception as e:
-        print(f"Error reading file {filepath}: {e}")
+        logger.error(f"Error reading {filepath}: {e}")
         return []
 
     all_chunks = []
+    total_paragraphs = 0
+    total_chunks = 0
 
     for i, section in enumerate(section_headers):
         start = raw.find(section)
         if start < 0:
-
-            print(f"Warning: Section header '{section}' not found in {filepath}")
             continue
 
         # Determine the end of the section
         end_marker_pos = -1
         if i + 1 < len(section_headers):
-
             next_section = section_headers[i+1]
-            end_marker_pos = raw.find(next_section, start + len(section)) # Search after current header
+            end_marker_pos = raw.find(next_section, start + len(section))
             if end_marker_pos < 0:
-                 end_marker_pos = len(raw)
+                end_marker_pos = len(raw)
         else:
             end_marker_pos = len(raw)
 
+        if end_marker_pos <= start:
+            continue
 
-        if end_marker_pos > start :
-             sec_txt = raw[start:end_marker_pos].strip()
-        else:
-             continue
-
-
-        # Split section into paragraphs (adjust delimiter if needed)
+        sec_txt = raw[start:end_marker_pos].strip()
         paragraphs = sec_txt.split("\n\n")
+        section_paragraphs = 0
+        section_chunks = 0
 
         for para in paragraphs:
-            para = para.strip() 
-            if not para: 
+            para = para.strip()
+            if not para:
                 continue
 
+            # Skip if paragraph is just a header (section or chapter)
+            if (para.strip() == section.strip() or 
+                para.strip().startswith("CHAPTER") or 
+                para.strip().startswith("BOOK") or
+                len(para.split()) <= 3):  # Skip very short paragraphs that are likely headers
+                continue
 
             tokens = tokenizer.tokenize(para, add_special_tokens=False)
+            token_count = len(tokens)
 
-            if len(tokens) <= target_max_len:
-
+            if token_count <= target_max_len:
                 all_chunks.append({
                     "text": para,
-                    "metadata": {**metadata, "section_title": section.strip()} # Add cleaned section title
+                    "metadata": {**metadata, "section_title": section.strip()}
                 })
+                section_chunks += 1
             else:
-
                 para_chunks = split_to_token_chunks(para, tokenizer, target_max_len)
                 for chunk_text in para_chunks:
                     if chunk_text.strip():
                         all_chunks.append({
                             "text": chunk_text,
-                            "metadata": {**metadata, "section_title": section.strip()} # Add cleaned section title
+                            "metadata": {**metadata, "section_title": section.strip()}
                         })
+                        section_chunks += 1
 
-    for c in all_chunks:
-        n = len(tokenizer.encode(c["text"], add_special_tokens=False))
-        assert n <= target_max_len, f"Chunk too long: {n} tokens"
+            section_paragraphs += 1
 
+        total_paragraphs += section_paragraphs
+        total_chunks += section_chunks
+
+    logger.info(f"Created {total_chunks} chunks from {os.path.basename(filepath)}")
     return all_chunks
 
 def build_faiss_index(chunks):

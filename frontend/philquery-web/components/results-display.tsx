@@ -1,9 +1,9 @@
 import type { QueryResult } from "@/lib/types"
 import LoadingIndicator from "./loading-indicator"
-import SourceItem from "./source-item"
 import { motion, AnimatePresence } from "framer-motion"
+import { AlertCircle, FileText, ChevronUp } from "lucide-react"
 import { useState } from "react"
-import { ChevronDown, ChevronUp, AlertCircle, FileText } from "lucide-react"
+import SourceItem from "./source-item"
 
 interface ResultsDisplayProps {
   queryResult: QueryResult | null
@@ -12,7 +12,8 @@ interface ResultsDisplayProps {
 }
 
 export default function ResultsDisplay({ queryResult, isLoading, error }: ResultsDisplayProps) {
-  const [showSources, setShowSources] = useState(true)
+  const [showSources, setShowSources] = useState(false)
+  console.log('[ResultsDisplay] Rendered with props:', { queryResult, isLoading, error });
 
   // Animation variants
   const containerVariants = {
@@ -50,7 +51,9 @@ export default function ResultsDisplay({ queryResult, isLoading, error }: Result
     }
   };
 
+  // Log when component is loading
   if (isLoading) {
+    console.log('[ResultsDisplay] Loading state active');
     return (
       <div className="w-full flex flex-col items-center justify-center py-16">
         <LoadingIndicator />
@@ -59,7 +62,9 @@ export default function ResultsDisplay({ queryResult, isLoading, error }: Result
     )
   }
 
+  // Log if there is an error
   if (error) {
+    console.log('[ResultsDisplay] Error state:', error);
     return (
       <motion.div 
         className="w-full py-8 text-center"
@@ -79,10 +84,27 @@ export default function ResultsDisplay({ queryResult, isLoading, error }: Result
     )
   }
 
-  if (!queryResult) return null
+  // Log the query result
+  if (queryResult) {
+    console.log('[ResultsDisplay] queryResult present:', queryResult);
+    if (queryResult.sources) {
+      console.log('[ResultsDisplay] queryResult.sources:', queryResult.sources);
+      if (Array.isArray(queryResult.sources)) {
+        queryResult.sources.forEach((src, idx) => {
+          console.log(`[ResultsDisplay] Source[${idx}]:`, src);
+        });
+      } else {
+        console.log('[ResultsDisplay] queryResult.sources is not an array:', queryResult.sources);
+      }
+    } else {
+      console.log('[ResultsDisplay] queryResult.sources is missing or falsy:', queryResult.sources);
+    }
+  } else {
+    console.log('[ResultsDisplay] queryResult is null or undefined');
+    return null
+  }
 
   const isUnderstandingMode = queryResult.response.mode === "understanding"
-  const hasReferences = queryResult.sources.length > 0
 
   return (
     <motion.div 
@@ -106,7 +128,7 @@ export default function ResultsDisplay({ queryResult, isLoading, error }: Result
       {/* Response Content */}
       <motion.div 
         variants={itemVariants}
-        className="mb-8 p-6 bg-white rounded-lg"
+        className="mb-8 p-6 bg-gray-50 rounded-lg"
       >
         <motion.div 
           className="prose prose-lg max-w-none"
@@ -132,60 +154,68 @@ export default function ResultsDisplay({ queryResult, isLoading, error }: Result
         </motion.div>
       </motion.div>
 
-      {/* Sources Section */}
-      {hasReferences && (
-        <motion.div variants={itemVariants}>
-          <motion.div 
-            className="flex items-center justify-between cursor-pointer mb-4"
-            onClick={() => setShowSources(!showSources)}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-          >
-            <h2 className="text-xl font-bold flex items-center">
-              Sources Consulted 
-              <motion.span 
-                className="ml-2 px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 500, damping: 15 }}
-              >
-                {queryResult.sources.length} {queryResult.sources.length === 1 ? 'source' : 'sources'}
-              </motion.span>
-            </h2>
-            <motion.button 
-              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-              animate={{ rotate: showSources ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ChevronUp size={20} />
-            </motion.button>
-          </motion.div>
-          
-          <AnimatePresence>
-            {showSources && (
+      {/* Sources Consulted Section */}
+      {(() => {
+        if (queryResult.sources && queryResult.sources.length > 0) {
+          console.log('[ResultsDisplay] Rendering sources consulted section:', queryResult.sources);
+          return (
+            <motion.div variants={itemVariants}>
               <motion.div 
-                className="space-y-4"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
+                className="flex items-center justify-between cursor-pointer mb-4"
+                onClick={() => setShowSources(!showSources)}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
               >
-                {queryResult.sources.map((source, index) => (
-                  <motion.div
-                    key={index}
-                    variants={fadeInUp}
-                    initial="hidden"
-                    animate="visible"
-                    transition={{ delay: index * 0.1 }}
+                <h2 className="text-xl font-bold flex items-center">
+                  Sources Consulted 
+                  <motion.span 
+                    className="ml-2 px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 15 }}
                   >
-                    <SourceItem source={source} />
-                  </motion.div>
-                ))}
+                    {queryResult.sources.length} {queryResult.sources.length === 1 ? 'source' : 'sources'}
+                  </motion.span>
+                </h2>
+                <motion.button 
+                  className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                  animate={{ rotate: showSources ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ChevronUp size={20} />
+                </motion.button>
               </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
-      )}
+              
+              <AnimatePresence>
+                {showSources && (
+                  <motion.div 
+                    className="space-y-4"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {queryResult.sources.map((source, index) => (
+                      <motion.div
+                        key={index}
+                        variants={fadeInUp}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <SourceItem source={source} isConsulted={true} />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          );
+        } else {
+          console.log('[ResultsDisplay] No sources consulted to render or sources array is empty:', queryResult.sources);
+          return null;
+        }
+      })()}
     </motion.div>
   )
 }
@@ -197,28 +227,28 @@ function formatUnderstandingResponse(content: string): string {
     // Handle markdown-style bold headers
     .replace(/\*\*([^*]+)\*\*/g, (match, header) => {
       console.log("Found potential header:", header);
-      // Check if the header has 6 or fewer words
-      const wordCount = header.trim().split(/\s+/).length;
-      console.log("Word count:", wordCount);
-      if (wordCount <= 6) {
+      // Check if the header is a standalone line (no other text on the same line)
+      const isStandaloneLine = !header.includes('\n') && header.trim().length > 0;
+      console.log("Is standalone line:", isStandaloneLine);
+      if (isStandaloneLine) {
         console.log("Formatting as header:", header.trim());
         return `<div class="my-6"><h4 class="font-bold text-lg text-gray-900 mb-2">${header.trim()}</h4></div>`;
       }
-      console.log("Not formatting as header (too many words)");
+      console.log("Not formatting as header (not standalone)");
       return match;
     })
     // Handle lists with clean styling
-    .replace(/^\s*[-*]\s+(.*?)$/gm, '<li class="ml-6 list-disc mb-2 text-gray-700">$1</li>')
+    .replace(/^\s*[-*]\s+(.*?)$/gm, '<li class="ml-6 list-disc mb-2 text-gray-800">$1</li>')
     // Handle italics with clean styling
-    .replace(/\*(.*?)\*/g, '<em class="italic text-gray-700">$1</em>')
+    .replace(/\*(.*?)\*/g, '<em class="italic text-gray-800">$1</em>')
     // Handle paragraphs with clean styling
-    .replace(/\n\n/g, '</p><p class="mb-4 text-gray-700">')
+    .replace(/\n\n/g, '</p><p class="mb-4 text-gray-800">')
   
   console.log("Formatted content:", formattedContent);
   
   // Wrap with paragraph tags if not already done
   if (!formattedContent.startsWith('<p>')) {
-    formattedContent = `<p class="mb-4 text-gray-700">${formattedContent}</p>`
+    formattedContent = `<p class="mb-4 text-gray-800">${formattedContent}</p>`
   }
   
   return formattedContent
@@ -262,15 +292,15 @@ function formatRetrievalResponse(content: string): string {
     // Handle bold with clean styling
     .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>')
     // Handle italics with clean styling
-    .replace(/\*(.*?)\*/g, '<em class="italic text-gray-700">$1</em>')
+    .replace(/\*(.*?)\*/g, '<em class="italic text-gray-800">$1</em>')
     // Handle links with clean styling
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">$1</a>')
     // Handle paragraphs with clean styling
-    .replace(/\n\n/g, '</p><p class="mb-4 text-gray-700">');
+    .replace(/\n\n/g, '</p><p class="mb-4 text-gray-800">');
   
   // If the content doesn't begin with an HTML tag, wrap it in a paragraph
   if (!formattedContent.startsWith('<')) {
-    formattedContent = `<p class="mb-4 text-gray-700">${formattedContent}</p>`;
+    formattedContent = `<p class="mb-4 text-gray-800">${formattedContent}</p>`;
   }
   
   return formattedContent;

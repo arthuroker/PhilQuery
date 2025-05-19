@@ -1,17 +1,27 @@
-import type { Source } from "@/lib/types"
+import type { AvailableSource, ConsultedSource } from "@/lib/types"
 import { ExternalLink } from "lucide-react"
 
 interface SourceItemProps {
-  source: Source
+  source: AvailableSource | ConsultedSource
+  isConsulted?: boolean
 }
 
-export default function SourceItem({ source }: SourceItemProps) {
+export default function SourceItem({ source, isConsulted = false }: SourceItemProps) {
+  const title = 'source_title' in source ? source.source_title : source.title
+  const author = source.author
+  const url = source.url
+
   return (
     <div className="p-4 rounded-md border border-border surface-alt">
-      <h3 className="font-bold text-lg mb-2">{source.title}</h3>
-      <p className="text-primary mb-3">"{source.excerpt}"</p>
+      <div className="font-bold text-lg mb-1">{title}</div>
+      {author && (
+        <div className="text-gray-600 mb-2">{author}</div>
+      )}
+      {isConsulted && 'excerpt' in source && (
+        <p className="text-primary mb-3">"{source.excerpt}"</p>
+      )}
       <a
-        href={source.url}
+        href={url}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center text-accent hover:text-accent/80 transition-colors duration-200"
