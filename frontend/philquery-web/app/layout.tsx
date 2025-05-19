@@ -12,7 +12,7 @@ const lora = Lora({
 })
 
 export const metadata: Metadata = {
-  title: "PhilQuery v0 | Explore Political Philosophy",
+  title: "PhilQuery",
   description: "An AI chatbot for exploring political philosophy texts",
     generator: 'v0.dev'
 }

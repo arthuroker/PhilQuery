@@ -1,6 +1,6 @@
 import os, pickle, faiss
 from transformers import AutoTokenizer, logging
-from embedder import embed_texts
+from .embedder import embed_texts
 
 logging.set_verbosity_error()
 

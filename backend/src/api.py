@@ -8,8 +8,8 @@ import os
 import faiss
 import logging
 
-from retrieval import ask_question
-from build_index import get_sources
+from .retrieval import ask_question
+from .build_index import get_sources
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-# Initialize index and chunk store
+
 try:
     root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     logger.info(f"Loading index from {os.path.join(root_dir, 'rousseau_works.index')}")
@@ -45,8 +45,8 @@ app.add_middleware(
 
 class Question(BaseModel):
     query: str
-    chunk_count: int = 5  # Default to 5 if not specified
-    mode: str = "understanding"  # Default to understanding mode
+    chunk_count: int = 5 
+    mode: str = "understanding" 
 
 @app.get("/")
 def home():
@@ -60,21 +60,20 @@ def list_sources():
 async def ask(question: Question):
     try:
         logger.info(f"Received question: {question.query} with chunk_count: {question.chunk_count} and mode: {question.mode}")
-        full_response = ask_question(question.query, index, chunk_store, mode=question.mode, top_k=question.chunk_count)
         
-        # Split the response into answer and sources
-        parts = full_response.split("\n\n---\n**Sources Consulted:**\n\n")
-        if len(parts) != 2:
-            logger.error("Unexpected response format")
-            raise HTTPException(status_code=500, detail="Unexpected response format from model")
-            
-        answer = parts[0].strip()
-        sources = [s.strip() for s in parts[1].split("\n\n") if s.strip()]
+        
+        answer, citations_json = ask_question(
+            question.query, 
+            index, 
+            chunk_store, 
+            mode=question.mode, 
+            top_k=question.chunk_count
+        )
         
         logger.info("Successfully generated answer")
         return {
             "answer": answer,
-            "sources": sources
+            "citations": citations_json
         }
     except Exception as e:
         logger.error(f"Error processing question: {e}")

@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { ChevronDown, ChevronUp, Info } from "lucide-react"
+import { ChevronDown, ChevronUp, Info, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { cn } from "@/lib/utils"
@@ -15,6 +15,7 @@ interface QueryInterfaceProps {
   setChunkCount: (count: number) => void
   onSubmit: (query: string) => void
   isLoading: boolean
+  resetResults?: () => void  // Optional reset function
 }
 
 export default function QueryInterface({
@@ -24,6 +25,7 @@ export default function QueryInterface({
   setChunkCount,
   onSubmit,
   isLoading,
+  resetResults,
 }: QueryInterfaceProps) {
   const [query, setQuery] = useState("")
   const [showAdvanced, setShowAdvanced] = useState(false)
@@ -32,6 +34,11 @@ export default function QueryInterface({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onSubmit(query)
+  }
+
+  const handleReset = () => {
+    setQuery("")
+    resetResults?.() // Only call if provided
   }
 
   return (
@@ -132,8 +139,8 @@ export default function QueryInterface({
             )}
           </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-center">
+          {/* Submit and Reset Buttons */}
+          <div className="flex justify-center space-x-4">
             <Button
               type="submit"
               className="bg-accent hover:bg-accent-light text-white font-normal py-2 px-6 rounded-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
@@ -141,6 +148,19 @@ export default function QueryInterface({
             >
               {isLoading ? "Processing..." : "Submit Query"}
             </Button>
+            
+            {resetResults && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleReset}
+                className="border-input hover:bg-muted/50 text-secondary hover:text-primary py-2 px-4 rounded-md transition-all duration-200"
+                disabled={isLoading || (!query.trim() && !resetResults)}
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Reset
+              </Button>
+            )}
           </div>
         </form>
       </div>

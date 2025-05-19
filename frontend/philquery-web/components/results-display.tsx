@@ -32,12 +32,6 @@ export default function ResultsDisplay({ queryResult, isLoading, error }: Result
 
   return (
     <div className="w-full mb-16 animate-fadeIn">
-      {/* User Query Echo */}
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-2">Your Query</h2>
-        <p className="text-primary">{queryResult.query}</p>
-      </div>
-
       {/* Chatbot Response */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Response</h2>
